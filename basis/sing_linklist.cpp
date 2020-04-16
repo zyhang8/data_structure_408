@@ -16,7 +16,7 @@ typedef struct LNode {
 //初始化
 bool InitList(LinkList &L) {
     L = (LNode *) malloc(sizeof(LNode));
-    if (L == NULL) //防止站数据
+    if (L == NULL) //防止脏数据
         return false;
     L->next = NULL;
     return true;
@@ -89,7 +89,7 @@ LNode *GetElem(LinkList L,int i){
 //按值查找
 LNode *LocateElem(LinkList L,ElemType e){
     LNode *p=L->next;
-    while(p!=NULL&&p->data==e){
+    while(p!=NULL&&p->data!=e){
         p=p->next;
     }
     return p;
@@ -154,19 +154,18 @@ bool PrintList(LinkList L) {
         return false;
     }
     while(p!=NULL){
-        printf("第%i个元素为:",x);
+        printf("第%d个元素为:",x);
         printf("%d\n",p->data);
         p=p->next;
         x++;
     }
-    printf("表长为:%d",x-1);
+    printf("表长为:%d\n",x-1);
     return true;
 }
 
 //摧毁单链表
 void DestroyList(LinkList &L){
     LNode *q,*p=L;
-    int x= 1;
     if (p == NULL) {
         return;
     }
