@@ -13,7 +13,7 @@ typedef struct LNode {
     struct LNode *next;
 } LNode, *LinkList;
 
-//初始化
+//初始化(带头结点)
 bool InitList(LinkList &L) {
     L = (LNode *) malloc(sizeof(LNode));
     if (L == NULL) //防止脏数据
@@ -22,7 +22,13 @@ bool InitList(LinkList &L) {
     return true;
 }
 
-//判断单链表是否为空
+//    初始化(不带头结点)
+bool InitList(LinkList &L) {
+    L = NULL;
+    return true;
+}
+
+//    判断单链表是否为空(带头结点)
 bool Empty(LinkList L){
     if(L->next==NULL)
         return false;
@@ -30,7 +36,15 @@ bool Empty(LinkList L){
         return true;
 }
 
-//在p结点之后插入元素e
+//    判断单链表是否为空(不带头结点)
+bool Empty(LinkList L){
+    if(L==NULL)
+        return false;
+    else
+        return true;
+}
+
+//    在p结点之后插入元素e
 bool InsertNextLNode(LNode *p,ElemType e){
     if(p==NULL)
         return false;
@@ -41,7 +55,7 @@ bool InsertNextLNode(LNode *p,ElemType e){
     return true;
 }
 
-//头插法
+//    头插法(带头结点)
 LinkList List_HeadInsert(LinkList &L) {
     LNode *s;
     int x;
@@ -58,6 +72,12 @@ LinkList List_TailInsert(LinkList &L){
     int x;
     LNode *s,*r=L;
     scanf("%d",&x);
+//    //    不带头节点
+//    L = (LNode *) malloc(sizeof(LNode));
+//    if (L == NULL) //防止脏数据
+//        return NULL;
+//    L->data=x;
+//    L->next=NULL;
     while(x!=9999){
         s=(LNode *)malloc(sizeof(LNode));
         s->data=x;
@@ -111,6 +131,14 @@ bool ListPriorInsert(LNode *p,ElemType e){
 
 //插入第i个位置
 bool ListInsert(LinkList &L, int i, ElemType e) {
+//    不带头结点
+//    if(i==1){
+//        LNode *s = (LNode *)malloc(sizeof(LNode));
+//        s->data=e;
+//        s->next=L;
+//        L=s;
+//        return true;
+//    }
     LNode *p;
     p=GetElem(L,i-1);//后插
 //    InsertNextLNode(p,e);
@@ -144,15 +172,33 @@ bool ListDelete(LinkList &L, int i, ElemType &e){
 //打印链表数据及表长
 bool PrintList(LinkList L) {
     if(L==NULL) {
-        printf("链表为空");
+        printf("链表为空\n");
         return false;
     }
     LNode *p=L->next;
     int x= 1;
     if (p == NULL) {
-        printf("链表仅有头结点");
+        printf("链表仅有头结点\n");
         return false;
     }
+    while(p!=NULL){
+        printf("第%d个元素为:",x);
+        printf("%d\n",p->data);
+        p=p->next;
+        x++;
+    }
+    printf("表长为:%d\n",x-1);
+    return true;
+}
+
+//打印链表数据及表长(无头结点)
+bool PrintList1(LinkList L) {
+    if(L==NULL) {
+        printf("链表为空");
+        return false;
+    }
+    LNode *p=L;
+    int x= 1;
     while(p!=NULL){
         printf("第%d个元素为:",x);
         printf("%d\n",p->data);
@@ -180,9 +226,12 @@ void DestroyList(LinkList &L){
 int main() {
     ElemType e;
     LinkList L;
-    Empty(L);
-    InitList(L);
-//    List_HeadInsert(L);
+    Empty(L);//带头结点
+//    Empty(L);//不带头结点
+    InitList(L);//带头结点
+//    InitList(L);//不带头结点
+    List_HeadInsert(L);//带头结点
+//    List_HeadInsert(L);//不带头结点
     List_TailInsert(L);
 //    L=GetElem(L,1);
 //    L=LocateElem(L,1);

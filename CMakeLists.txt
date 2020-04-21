@@ -14,4 +14,7 @@ set(CMAKE_CXX_STANDARD 11)
 
 # wangdao
 #add_executable(data_structure_408 wangdao/Chapter2.2.cpp)
-add_executable(data_structure_408 wangdao/Chapter2.3.cpp)
+#add_executable(data_structure_408 "wangdao/Chapter2.3(1-16&&21-25).cpp")
+#add_executable(data_structure_408 "wangdao/Chapter2.3(17).cpp")
+#add_executable(data_structure_408 "wangdao/Chapter2.3(18-19).cpp")
+#add_executable(data_structure_408 "wangdao/Chapter2.3(20).cpp")

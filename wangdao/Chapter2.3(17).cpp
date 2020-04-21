@@ -1,7 +1,8 @@
 //
-// Created by thinkpad on 2020-04-16.
-// 循环双链表
+// Created by thinkpad on 2020-04-18.
+// 2.3课后习题(17)
 //
+
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -67,14 +68,14 @@ DListlist DList_TailInsert(DListlist &L){
         s=(DNode *)malloc(sizeof(DNode));
         s->data=x;
         r->next=s;
-        s->prior=r;
+        r->next->prior=r;
         r=s;
         scanf("%d",&x);
     }
     r->next=L;
+    L->prior=r;
     return L;
 }
-
 
 //删除p的后继结点q
 bool DeleteNextDNode(DNode *p){
@@ -144,16 +145,36 @@ bool PrintDList(DListlist L){
     return true;
 }
 
+//    2.3.17
+bool Symmetry(DListlist L){
+    DNode *p=L->next,*q=L->prior;
+    while (p!=q&&p->next!=q){
+        if(p->data==q->data) {
+            p = p->next;
+            q = q->prior;
+        } else{
+            printf("%d\n",p->data);
+            printf("%d\n",q->data);
+            printf("error\n");
+            return false;
+        }
+    }
+    printf("success\n");
+    return true;
+}
+
 int main(){
     DListlist L;
-    Empty(L);
+//    Empty(L);
     InitDListlist(L);
 //    DList_HeadInsert(L);
     DList_TailInsert(L);
     PrintDList(L);
 //    GetElem(L,2);
-    LocateElem(L,3);
+//    LocateElem(L,3);
+//    2.3.17
+    Symmetry(L);
     DestoryDList(L);
-    PrintDList(L);
+//    PrintDList(L);
     return 0;
 }

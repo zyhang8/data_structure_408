@@ -60,6 +60,23 @@ DListlist DList_HeadInsert(DListlist &L){
     return L;
 }
 
+//尾插法
+DListlist DList_TailInsert(DListlist &L){
+    int x;
+    DNode *s,*r=L;
+    scanf("%d",&x);
+    while(x!=9999){
+        s=(DNode *)malloc(sizeof(DNode));
+        s->data=x;
+        r->next=s;
+        s->prior=r;
+        r=s;
+        scanf("%d",&x);
+    }
+    r->next=NULL;
+    return L;
+}
+
 //删除p的后继结点q
 bool DeleteNextDNode(DNode *p){
     if(p==NULL)
@@ -137,9 +154,10 @@ bool PrintDList(DListlist L){
 
 int main(){
     DListlist L;
-    Empty(L);
+//    Empty(L);
     InitDListlist(L);
-    DList_HeadInsert(L);
+//    DList_HeadInsert(L);
+    DList_TailInsert(L);
     PrintDList(L);
 //    GetElem(L,2);
 //    LocateElem(L,3);

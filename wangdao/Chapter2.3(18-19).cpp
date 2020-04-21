@@ -1,6 +1,6 @@
 //
-// Created by thinkpad on 2020-04-16.
-// 循环单链表
+// Created by thinkpad on 2020-04-18.
+// 2.3课后习题(18-19)
 //
 
 #include <stdio.h>
@@ -180,20 +180,70 @@ void DestroyList(LinkList &L){
     L = NULL;
 }
 
+//    2.3.18
+void Merge(LinkList &L,LinkList &B){
+    LNode *p,*q;
+    p=L;
+    while (p->next!=L){
+        p=p->next;
+    }
+    q=B;
+    while (q->next!=B){
+        q=q->next;
+    }
+    p->next=B;
+    q->next=L;
+}
+
+//    2.3.19
+void Search_min(LinkList &L){
+    LNode *pmin,*min,*pre,*p;
+    while (L->next!=L){
+        pmin=L;
+        min=L->next;
+        pre=L;
+        p=L->next;
+        while(p!=L){
+            if(p->data<min->data){
+                min=p;
+                pmin=pre;
+            }
+            pre=p;
+            p=p->next;
+        }
+        pmin->next=min->next;
+        printf("%d\n",min->data);
+        free(min);
+    }
+    free(L);
+}
+
 int main() {
     ElemType e;
     LinkList L;
-    Empty(L);
+    LinkList B;
+//    Empty(L);
     InitList(L);
+//    InitList(B);
 //    List_HeadInsert(L);
     List_TailInsert(L);
+//    List_TailInsert(B);
 //    GetElem(L,1);
 //    LocateElem(L,1);
 //    ListInsert(L,1,5);
 //    ListDelete(L,2,e);
 //    DeleteLNode(L->next);
     PrintList(L);
+//    2.3.18
+//    Merge(L,B);
+//    PrintList(L);
+//    2.3.19
+//    Search_min(L);
+//    2.3.20
+
     DestroyList(L);
-    PrintList(L);//检查是否链表销毁
+//    PrintList(L);//检查是否链表销毁
+
     return 0;
 }
+
