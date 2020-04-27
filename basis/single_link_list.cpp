@@ -230,8 +230,8 @@ int main() {
 //    Empty(L);//不带头结点
     InitList(L);//带头结点
 //    InitList(L);//不带头结点
-    List_HeadInsert(L);//带头结点
-//    List_HeadInsert(L);//不带头结点
+//    List_HeadInsert(L);//带头结点
+    List_HeadInsert(L);//不带头结点
     List_TailInsert(L);
 //    L=GetElem(L,1);
 //    L=LocateElem(L,1);

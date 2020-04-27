@@ -6,7 +6,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#define InitSize 10
+#define InitSize 10;
 
 using namespace std;
 typedef int ElemType;

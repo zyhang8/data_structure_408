@@ -11,6 +11,9 @@ set(CMAKE_CXX_STANDARD 11)
 #add_executable(data_structure_408 basis/static_link_list.cpp)
 #add_executable(data_structure_408 basis/sequential_static_list.cpp)
 #add_executable(data_structure_408 basis/sequential_dynamic_list.cpp)
+#add_executable(data_structure_408 basis/sequential_stack.cpp)
+#add_executable(data_structure_408 basis/link_stack.cpp)
+add_executable(data_structure_408 basis/share_stack.cpp)
 
 # wangdao
 #add_executable(data_structure_408 wangdao/Chapter2.2.cpp)
