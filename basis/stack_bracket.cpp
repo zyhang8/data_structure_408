@@ -1,6 +1,7 @@
 //
-// Created by Yu Zhong. on 2020-04-27.
-// Ë³ÐòÕ»
+// Created by Mr. Yu Zhong. on 2020-05-04.
+// Copyright (c) 2020 Yu Zhong. All rights reserved.
+// stack_bracket.cpp
 //
 
 #include <cstdio>
@@ -41,7 +42,7 @@ bool GetTop(SqStack S,ElemType &x){
     if(S.top==-1)
         return false;
     x=S.data[S.top];
-    printf("Õ»¶¥ÔªËØÎª:%d\n",x);
+    printf("æ ˆé¡¶å…ƒç´ ä¸º:%d\n",x);
     return true;
 }
 
