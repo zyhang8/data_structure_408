@@ -7,7 +7,7 @@
 #include <cstdio>
 
 #define MaxSize 50
-typedef int ElemType;
+typedef char ElemType;
 typedef struct {
     ElemType data[MaxSize];
     int top;
@@ -42,8 +42,32 @@ bool GetTop(SqStack S,ElemType &x){
     if(S.top==-1)
         return false;
     x=S.data[S.top];
-    printf("栈顶元素为:%d\n",x);
+    printf("ջ��Ԫ��Ϊ:%s\n",&x);
     return true;
+}
+
+bool CheckBracket(SqStack S,char str[], int length){
+    ElemType p;
+    for (int i = 0; i < length; i++) {
+        if(str[i] == '[' || str[i] == '{' || str[i] == '('){
+            Push(S,str[i]);
+//            GetTop(S,p);
+        }
+        else{
+            if(StateEmpty(S))
+                return false;
+            ElemType x;
+            Pop(S,x);
+            if(str[i]==')' && x!='(')
+                return false;
+            if(str[i]==']' && x!='[')
+                return false;
+            if(str[i]=='}' && x!='{')
+                return false;
+//            GetTop(S,p);
+        }
+    }
+    return StateEmpty(S);
 }
 
 int main(){
@@ -51,11 +75,15 @@ int main(){
     ElemType x;
     InitStack(S);
     StateEmpty(S);
-    Push(S,1);
-    Push(S,2);
-    Push(S,3);
-    GetTop(S,x);
-    Pop(S,x);
-    GetTop(S,x);
+//    Push(S,1);
+//    Push(S,2);
+//    Push(S,3);
+//    GetTop(S,x);
+//    Pop(S,x);
+//    GetTop(S,x);
+    char str[8]={ '{','[','(','[',']',')',']','}'};
+    int length=8;
+    if(CheckBracket(S,str,length))
+        printf("200");
     return 0;
 }
