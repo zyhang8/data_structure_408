@@ -11,8 +11,8 @@ typedef int ElemType;
 typedef struct {
     ElemType data[MaxSize];
     int front,rear;
-    int size;
-    int tag;
+    int size; //数量大小
+    int tag; //标记队不空还是队空
 } SqQueue;
 
 void InitQueue(SqQueue &Q){
@@ -41,7 +41,8 @@ bool DeQueue(SqQueue &Q,ElemType &x){
     x=Q.data[Q.front];
     Q.front=(Q.front+1)%MaxSize;
     Q.size--;
-    Q.tag=0;
+    if(Q.rear==Q.front)
+        Q.tag=0;
     return true;
 }
 
