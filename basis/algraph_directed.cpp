@@ -43,6 +43,12 @@ void InitQueue(LinkQueue &Q){
     Q.front->next=NULL;
 }
 
+bool isEmpty(LinkQueue Q){
+    if(Q.rear==Q.front)
+        return true;
+    else return false;
+}
+
 void EnQueue(LinkQueue &Q,ElemType x){
     LinkNode *p=(LinkNode *)malloc(sizeof(LinkNode));
     p->data=x;
@@ -86,12 +92,16 @@ void CreateGraph(ALGraph &G,EdgeType edge[][5],int n,int m){
     }
 }
 
+void visit(ALGraph G,int x){
+    printf("%d ",G.vertices[x].data);
+}
+
 void PrintfGraph(ALGraph G){
     ArcNode *p;
     for (int i = 0; i < MaxVertexNum; i++) {
         if(G.vertices[i].state==1){
             p=G.vertices[i].first;
-            printf("%d ",G.vertices[i].data);
+            visit(G,i);
             while (p!=NULL){
                 printf("%d,%d  ",p->adjvex,p->weight);
                 p=p->next;
@@ -213,7 +223,6 @@ void DeleteVertex(ALGraph &G,int x){
 }
 int FirstNeighbor(ALGraph G,int x){
     if(G.vertices[x].state<1||x>=MaxVertexNum||G.vertices[x].first==NULL){
-        printf("error\n");
         return -1;
     } else{
         return G.vertices[x].first->adjvex;
@@ -266,17 +275,30 @@ void Set_edge_value(ALGraph &G,int n,int m,int weight){
     return;
 }
 
-void BFS(ALGraph G,int n){
-
+void BFS(ALGraph G,int n,LinkQueue Q){
+    visit(G,n);
+    visited[n]= true;
+    EnQueue(Q,n);
+    while (!isEmpty(Q)){
+        DeQueue(Q,n);
+        for (int i = FirstNeighbor(G,n); i >= 0; i=NextNeighbor(G,n,i)) {
+            if(!visited[i]){
+                visit(G,i);
+                visited[i]= true;
+                EnQueue(Q,i);
+            }
+        }
+    }
 }
 void BFSTraverse(ALGraph G){
+    LinkQueue Q;
     for (int i = 0; i < MaxVertexNum; i++) {
         visited[i]= false;
     }
-
+    InitQueue(Q);
     for (int i = 0; i < MaxVertexNum; i++) {
         if(G.vertices[i].state>0&&visited[i]== false){
-            BFS(G,i);
+            BFS(G,i,Q);
         }
     }
 }
@@ -314,6 +336,7 @@ int main(){
         printf("ȨֵΪ%d\n",Get_edge_value(G,2,3));
     Set_edge_value(G,2,3,2);
     PrintfGraph(G);
+    InsertVertex(G,7);
     BFSTraverse(G);
     return 0;
 }
