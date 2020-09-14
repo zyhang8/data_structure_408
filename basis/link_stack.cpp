@@ -15,7 +15,7 @@ void InitStack(LiStack &S){
     S=NULL;
 }
 
-bool StateEmpty(LiStack S){
+bool StackEmpty(LiStack S){
     if(S==NULL)
         return true;
     else
@@ -63,7 +63,7 @@ int main(){
     LiStack S;
     ElemType x;
     InitStack(S);
-    StateEmpty(S);
+    StackEmpty(S);
     Push(S,1);
     Push(S,2);
     Push(S,3);

@@ -1,6 +1,7 @@
 //
-// Created by Yu Zhong. on 2020-04-16.
-// 顺序表(静态分配)
+// Created by Mr. Roy Z. on 2020/8/25.
+// Copyright (c) 2020 Yu Zhong. All rights reserved.
+// Chapter8.4_5.cpp
 //
 
 
@@ -244,28 +245,17 @@ void HeapSortMin(ElemType data[],int n){
     }
 }
 
-ElemType *B=(ElemType *)malloc(8* sizeof(ElemType));
-void Merge(ElemType data[],int low,int mid,int high){
-    for (int i = low; i <= high; i++) {
-        B[i]=data[i];
+///5
+bool JudgeMinHeap(ElemType data[],int n){
+    int x;
+    for (int i = n/2; i >=1 ; i--) {
+        x=i*2;
+        if(x<n&&data[x]>data[x+1])
+            x++;
+        if(data[i]>data[x])
+            return false;
     }
-    int i,j,k;
-    for (i = low,j=mid+1,k=i; i <= mid&& j<= high; k++) {
-        if(B[i]<=B[j])
-            data[k]=B[i++];
-        else
-            data[k]=B[j++];
-    }
-    while(i<=mid)   data[k++]=B[i++];
-    while(j<=high)   data[k++]=B[j++];
-}
-void MergeSort(ElemType data[],int low,int high){
-    int mid=(low+high)/2;
-    if(low<high){
-        MergeSort(data,low,mid);
-        MergeSort(data,mid+1,high);
-        Merge(data,low,mid,high);
-    }
+    return true;
 }
 
 int main(){
@@ -309,12 +299,15 @@ int main(){
 //    PrintList(L);
 //    SelectSort(L.data,L.length);//选择排序
 //    PrintList(L);
-//    ListInsert(L,1,0);
-//    HeapSort(L.data,L.length-1);//堆排序从小到大
-//    PrintList(L);
+    ListInsert(L,1,0);
+    HeapSort(L.data,L.length-1);//堆排序从小到大
+    PrintList(L);
 //    HeapSortMin(L.data,L.length-1);//堆排序从大到小
 //    PrintList(L);
-    MergeSort(L.data,0,7);//归并排序
-    PrintList(L);
+///5
+    if(JudgeMinHeap(L.data, L.length - 1))
+        printf("200\n");
+    else
+        printf("404\n");
     return 0;
 }

@@ -1,8 +1,7 @@
 //
-// Created by Yu Zhong. on 2020-04-16.
-// 顺序表(静态分配)
-//
-
+// Created by Mr. Roy Z. on 2020/8/25.
+// Copyright (c) 2020 Yu Zhong. All rights reserved.
+// Chapter8.6.cpp
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -268,6 +267,48 @@ void MergeSort(ElemType data[],int low,int high){
     }
 }
 
+///2
+void Insert_Sort(ElemType data[],int m,int n){
+    int j;
+    for (int i = m+1; i <= m+n; i++) {
+        data[0]=data[i];
+        for (j = i-1; data[j] >data[0] ; j--) {
+            data[j+1]=data[j];
+        }
+        data[j+1]=data[0];
+    }
+    data[0]=0;
+}
+
+///3
+ElemType *Count=(ElemType *)malloc(8* sizeof(ElemType));
+void CountSort(ElemType data[],int n){
+    int count;
+    for (int i = 0; i < n; i++) {
+        count =0;
+        for (int j = 0; j < n; j++) {
+            if(data[j]<data[i])
+                count++;
+        }
+        Count[count]=data[i];
+    }
+    for (int k = 0; k < n; k++) {
+        data[k]=Count[k];
+    }
+}
+
+///4
+void KnLocate(ElemType data[],int low,int high){
+    int pivot=data[high];
+    while(low<high){
+        while(low<high&&data[low]<=pivot)   low++;
+        data[high]=data[low];
+        while(low<high&&data[high]>=pivot)   high--;
+        data[low]=data[high];
+    }
+    data[low]=pivot;
+}
+
 int main(){
     SeqList L;
     InitList(L);
@@ -309,12 +350,24 @@ int main(){
 //    PrintList(L);
 //    SelectSort(L.data,L.length);//选择排序
 //    PrintList(L);
-//    ListInsert(L,1,0);
+    ListInsert(L,1,0);//是否有哨兵
 //    HeapSort(L.data,L.length-1);//堆排序从小到大
 //    PrintList(L);
 //    HeapSortMin(L.data,L.length-1);//堆排序从大到小
 //    PrintList(L);
-    MergeSort(L.data,0,7);//归并排序
+//    MergeSort(L.data,0,7);//归并排序
+//    PrintList(L);
+///2
+//    MergeSort(L.data,1,5);//创造题目条件
+//    Insert_Sort(L.data,5,3);
+//    PrintList(L);
+///3
+//    L.data[0]=50;
+//    PrintList(L);
+//    CountSort(L.data,L.length);
+//    PrintList(L);
+///4
+    KnLocate(L.data,1,8);
     PrintList(L);
     return 0;
 }

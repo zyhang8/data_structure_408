@@ -15,6 +15,7 @@ typedef int EdgeType;
 typedef bool VisitType;
 typedef int ElemType;
 VisitType visited[MaxVertexNum];
+EdgeType distance[MaxVertexNum];//非带权图从u到其他节点的最小路径
 typedef struct ArcNode{//边表结点
     EdgeType adjvex;
     EdgeType weight;
@@ -37,6 +38,48 @@ typedef struct LinkNode{
 typedef struct {
     LinkNode *front,*rear;
 }LinkQueue;
+typedef struct Linknode{
+    ElemType data;
+    struct Linknode *next;
+} Linknode, *LiStack;
+
+void InitStack(LiStack &S){
+    S=NULL;
+}
+
+bool StackEmpty(LiStack S){
+    if(S==NULL)
+        return true;
+    else
+        return false;
+}
+
+bool Push(LiStack &S,ElemType x){
+    Linknode *s = (Linknode *)malloc(sizeof(Linknode));
+    s->data=x;
+    if(S==NULL){
+        S=s;
+        S->next=NULL;
+        return true;
+    }
+    s->next=S;
+    S=s;
+    return true;
+}
+
+bool Pop(LiStack &S,ElemType &x){
+    if(S->next==NULL){
+        x=S->data;
+        S=NULL;
+        return true;
+    }
+    Linknode *p;
+    p=S;
+    x=S->data;
+    S=S->next;
+    free(p);
+    return true;
+}
 
 void InitQueue(LinkQueue &Q){
     Q.front=Q.rear=(LinkNode *)malloc(sizeof(LinkNode));
@@ -153,6 +196,7 @@ void InsertVertex(ALGraph &G,int x){
     G.vertices[x].data=x;
     G.vertices[x].first=NULL;
 }
+
 void AddEdge(ALGraph &G,int n,int m){
     if(G.vertices[n].state<1||G.vertices[m].state<1||n>=MaxVertexNum||m>=MaxVertexNum)
         return;
@@ -303,6 +347,80 @@ void BFSTraverse(ALGraph G){
     }
 }
 
+void BFS_MIN_Distance(ALGraph G,int x){
+    LinkQueue Q;
+    for (int i = 0; i < MaxVertexNum; i++) {
+        if(G.vertices[i].state>0)
+            distance[i]=-1;
+    }
+    visited[x]= true;
+    distance[x]=0;
+    InitQueue(Q);
+    EnQueue(Q,x);
+    printf("%d,%d ",x,distance[x]);
+    while (!isEmpty(Q)){
+        DeQueue(Q,x);
+        for (int i = FirstNeighbor(G,x); i >= 0; i=NextNeighbor(G,x,i)) {
+            if(!visited[i]){
+                distance[i]=distance[x]+1;
+                visited[i]= true;
+                printf("%d,%d ",i,distance[i]);
+                EnQueue(Q,i);
+            }
+        }
+    }
+}
+
+void DFS(ALGraph G,int n){
+    visit(G,n);
+    visited[n]= true;
+    for (int i = FirstNeighbor(G,n); i >= 0; i=NextNeighbor(G,n,i)) {
+        if(!visited[i]){
+            DFS(G,i);
+        }
+    }
+}
+void DFSTraverse(ALGraph G){
+    for (int i = 0; i < MaxVertexNum; i++) {
+        visited[i]= false;
+    }
+    for (int i = 0; i < MaxVertexNum; i++) {
+        if(G.vertices[i].state>0&&visited[i]== false){
+            DFS(G,i);
+        }
+    }
+}
+
+VertexType print[MaxVertexNum]={-1};
+VertexType indegree[MaxVertexNum]={2,0,1,1,1,-1,0};
+bool TopulogicalSort(ALGraph G){
+    LiStack S;
+    InitStack(S);
+    for (int i = 0; i < MaxVertexNum; i++)
+        if(indegree[i]==0&&G.vertices[i].state>0)
+            Push(S,i);
+    int count=0,x;
+    while (!StackEmpty(S)){
+        Pop(S,x);
+        print[count++]=x;
+        for (int i = FirstNeighbor(G,x); i >= 0; i=NextNeighbor(G,x,i)) {
+            if(--indegree[i]==0)
+                Push(S,i);
+        }
+    }
+    if(count==G.vexnum){
+        for (int i = 0; i < G.vexnum; i++) {
+            printf("%d ",print[i]);
+        }
+        printf("\n");
+        return true;
+    }
+    else{
+        printf("error\n");
+        return false;
+    }
+}
+
 int main(){
     ALGraph G;
     EdgeType edge[5][5]={{0,1,0,0,0},{1,0,1,0,0},{0,0,0,1,1},{1,0,0,0,0},{0,1,0,0,0}};
@@ -337,6 +455,16 @@ int main(){
     Set_edge_value(G,2,3,2);
     PrintfGraph(G);
     InsertVertex(G,7);
-    BFSTraverse(G);
+//    BFSTraverse(G);
+//    BFS_MIN_Distance(G,1);//单源非带权图从u到其他节点的最小路径
+//    DFSTraverse(G);
+    RemoveEdge(G,4,1);
+    PrintfGraph(G);
+    RemoveEdge(G,0,1);
+    PrintfGraph(G);
+    TopulogicalSort(G);//拓扑排序
+//    AddEdge(G,4,1);
+//    AddEdge(G,0,1);
+//    PrintfGraph(G);
     return 0;
 }

@@ -1,7 +1,7 @@
 //
-// Created by Mr. Roy Z. on 2020/8/18.
+// Created by Mr. Roy Z. on 2020/8/20.
 // Copyright (c) 2020 Yu Zhong. All rights reserved.
-// algraph_undirected.cpp
+// Chapter6.3.cpp
 //
 
 #include <stdio.h>
@@ -38,6 +38,48 @@ typedef struct LinkNode{
 typedef struct {
     LinkNode *front,*rear;
 }LinkQueue;
+typedef struct Linknode{
+    ElemType data;
+    struct Linknode *next;
+} Linknode, *LiStack;
+
+void InitStack(LiStack &S){
+    S=NULL;
+}
+
+bool StateEmpty(LiStack S){
+    if(S==NULL)
+        return true;
+    else
+        return false;
+}
+
+bool Push(LiStack &S,ElemType x){
+    Linknode *s = (Linknode *)malloc(sizeof(Linknode));
+    s->data=x;
+    if(S==NULL){
+        S=s;
+        S->next=NULL;
+        return true;
+    }
+    s->next=S;
+    S=s;
+    return true;
+}
+
+bool Pop(LiStack &S,ElemType &x){
+    if(S->next==NULL){
+        x=S->data;
+        S=NULL;
+        return true;
+    }
+    Linknode *p;
+    p=S;
+    x=S->data;
+    S=S->next;
+    free(p);
+    return true;
+}
 
 void InitQueue(LinkQueue &Q){
     Q.front=Q.rear=(LinkNode *)malloc(sizeof(LinkNode));
@@ -397,6 +439,74 @@ void DFSTraverse(ALGraph G){
     }
 }
 
+void DFS(ALGraph G,int n,int &Vnum,int &Enum,VisitType visited[]){
+    visited[n]= true;
+    Vnum++;
+    for (int i = FirstNeighbor(G,n); i >= 0; i=NextNeighbor(G,n,i)) {
+        Enum++;
+        if(!visited[i]){
+            DFS(G,i,Vnum,Enum,visited);
+        }
+    }
+}
+bool isTree(ALGraph G){
+    for (int i = 0; i < MaxVertexNum; i++) {
+        visited[i]= false;
+    }
+    int Vnum=0,Enum=0;
+    DFS(G,1,Vnum,Enum,visited);
+    if(Vnum==G.vexnum&&Enum==2*(G.vexnum-1))
+        return true;
+    else
+        return false;
+}
+
+void DFS_Non_RC(ALGraph &G,int x){
+    LiStack S;
+    int p;
+    InitStack(S);
+    for (int i = 0; i < MaxVertexNum; i++) {
+        visited[i]= false;
+    }
+    Push(S,x);
+    visited[x]= true;
+    while (!StateEmpty(S)){
+        Pop(S,p);
+        visit(G,p);
+        for (int i = FirstNeighbor(G,p); i >= 0; i=NextNeighbor(G,p,i)) {
+            if(!visited[i]){
+                printf("200 %d\n",i);
+                Push(S,i);
+                visited[i]= true;
+            }
+        }
+    }
+}
+///5
+void FindPath(ALGraph G,int n,int m,VertexType path[],int distance){
+    int x;
+    ArcNode *p;
+    distance++;
+    path[distance]=n;
+    visited[n]= true;
+    if(n==m){
+        for (int i = 0; i < distance+1; i++) {
+            printf("%d ",path[i]);
+        }
+        printf("\n");
+    }
+    p=G.vertices[n].first;
+    while (p!=NULL){
+        x=p->adjvex;
+        if(visited[x]== false)
+            FindPath(G,x,m,path,distance);
+        p=p->next;
+    }
+    visited[n]= false;
+
+
+}
+
 int main(){
     ALGraph G;
     EdgeType edge[5][5]={{0,1,0,1,0},{1,0,1,0,1},{0,1,0,1,1},{1,0,1,0,0},{0,1,1,0,0}};
@@ -432,7 +542,17 @@ int main(){
     PrintfGraph(G);
     InsertVertex(G,7);
 //    BFSTraverse(G);
-    BFS_MIN_Distance(G,1);//单源非带权图从u到其他节点的最小路径
+//    BFS_MIN_Distance(G,1);//单源非带权图从u到其他节点的最小路径
 //    DFSTraverse(G);
+    ///2
+//    if(isTree(G)== true)
+//        printf("是树\n");
+//    else
+//        printf("不是树\n");
+    ///3
+//    DFS_Non_RC(G,1);
+    ///5
+    VertexType path[MaxVertexNum]={0};
+    FindPath(G,1,3,path,-1);
     return 0;
 }

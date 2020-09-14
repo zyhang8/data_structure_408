@@ -1,8 +1,8 @@
 //
-// Created by Yu Zhong. on 2020-04-16.
-// 顺序表(静态分配)
+// Created by Mr. Roy Z. on 2020/8/24.
+// Copyright (c) 2020 Yu Zhong. All rights reserved.
+// Chapter8.3.cpp
 //
-
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -14,6 +14,7 @@ typedef struct{
     ElemType data[MaxSize];
     int length;
 }SeqList;
+typedef enum {RED,WHITE,BLUE} color;
 
 //初始化
 void InitList(SeqList &L){
@@ -175,96 +176,127 @@ void QucikSort(ElemType data[],int low,int high){
     }
 }
 
-void SelectSort(ElemType data[],int n){
-    int min;
+///2
+void DoubleBubbleSort(ElemType data[],int n){
+    bool flag1,flag2;
+    int count=0;
     for (int i = 0; i < n-1; i++) {
-        min=i;
-        for (int j = i+1; j < n; j++) {
-            if(data[j]<data[min])
-                min=j;
+        flag1= false;
+        flag2= false;
+        for (int j = n-1; j > i; j--) {
+            if(data[j-1]>data[j]){
+                swap(data[j-1],data[j]);
+                flag1= true;
+            }
         }
-        if(min!=i)
-            swap(data[min],data[i]);
+        for (int j = 0; j < n-i-1; j++) {
+            if(data[j]>data[j+1]){
+                swap(data[j],data[j+1]);
+                flag2= true;
+            }
+        }
+        count++;
+        printf("200 %d\n",count);
+        if (flag1 == false && flag2== false)
+            return;
     }
 }
 
-void HeapAdjust(ElemType data[],int k,int n){
-    data[0]=data[k];
-    for (int i = 2*k; i <= n; i=i*2) {
-        if(i<n&&data[i]<data[i+1])
-            i++;
-        if(data[0]>=data[i])
-            break;
-        else{
-            data[k]=data[i];
-            k=i;
-        }
-    }
-    data[k]=data[0];
-    data[0]=0;
-}
-void BuildMaxHeap(ElemType data[],int n){
-    for (int i = n/2; i >= 1; i--) {
-        HeapAdjust(data,i,n);
-    }
-}
-void HeapSort(ElemType data[],int n){
-    BuildMaxHeap(data,n);
-    for (int i = n; i > 1; i--) {
-        swap(data[i],data[1]);
-        HeapAdjust(data,1,i-1);
+///3
+void EvenFront(ElemType data[],int n){
+    int low=0,high=n-1;
+    while(low<high){
+        while(low<high&&data[low]%2!=0) low++;
+        while(low<high&&data[high]%2==0) high--;
+        if(low<high)
+            swap(data[low],data[high]);
+        low++;
+        high--;
     }
 }
 
-void HeapMinAdjust(ElemType data[],int k,int n){
-    data[0]=data[k];
-    for (int i = 2*k; i <= n; i=i*2) {
-        if(i<n&&data[i]>data[i+1])
-            i++;
-        if(data[0]<=data[i])
-            break;
-        else{
-            data[k]=data[i];
-            k=i;
-        }
+///4
+int Partition2(ElemType data[],int low,int high){
+    int rand_index=low+rand()%(high-low+1);
+    swap(data[rand_index],data[low]);
+    int pivot=data[low];
+    while(low<high){
+        while (low<high&&data[high]>=pivot) high--;
+        data[low]=data[high];
+        while (low<high&&data[low]<=pivot) low++;
+        data[high]=data[low];
     }
-    data[k]=data[0];
-    data[0]=0;
+    data[low]=pivot;
+    return low;
 }
-void BuildMinHeap(ElemType data[],int n){
-    for (int i = n/2; i >= 1; i--) {
-        HeapMinAdjust(data,i,n);
-    }
-}
-void HeapSortMin(ElemType data[],int n){
-    BuildMinHeap(data,n);
-    for (int i = n; i > 1; i--) {
-        swap(data[i],data[1]);
-        HeapMinAdjust(data,1,i-1);
-    }
-}
-
-ElemType *B=(ElemType *)malloc(8* sizeof(ElemType));
-void Merge(ElemType data[],int low,int mid,int high){
-    for (int i = low; i <= high; i++) {
-        B[i]=data[i];
-    }
-    int i,j,k;
-    for (i = low,j=mid+1,k=i; i <= mid&& j<= high; k++) {
-        if(B[i]<=B[j])
-            data[k]=B[i++];
-        else
-            data[k]=B[j++];
-    }
-    while(i<=mid)   data[k++]=B[i++];
-    while(j<=high)   data[k++]=B[j++];
-}
-void MergeSort(ElemType data[],int low,int high){
-    int mid=(low+high)/2;
+void QucikSort2(ElemType data[],int low,int high){
     if(low<high){
-        MergeSort(data,low,mid);
-        MergeSort(data,mid+1,high);
-        Merge(data,low,mid,high);
+        int pivotpos=Partition2(data,low,high);
+        QucikSort2(data,low,pivotpos-1);
+        QucikSort2(data,pivotpos+1,high);
+    }
+}
+
+///5
+int kth_elem(ElemType data[],int n,int k){
+    if(k>n)
+        return -1;
+    for (int i = 0; i < n-1; i++) {
+        for (int j = n-1; j > i; j--) {
+            if(data[j-1]>data[j]){
+                swap(data[j-1],data[j]);
+            }
+        }
+        k--;
+        if (k==0)
+            return data[i];
+    }
+    return -1;
+}
+
+///6
+int setPatition(ElemType data[],int n){
+    int pivot,low=0,high=n-1,k=n/2,low0=0,high0=n-1,flag=1,sum1=0,sum2=0;
+    while(flag== 1){
+        pivot=data[low];
+        while(low<high){
+            while(low<high&&data[high]>=pivot) high--;
+            data[low]=data[high];
+            while(low<high&&data[low]<=pivot) low++;
+            data[high]=data[low];
+        }
+        data[low]=pivot;
+        if(low==k-1)    flag=0;
+        else if(low<k-1){
+            low=low+1;
+            low0=low;
+            high=high0;
+        } else{
+            high=high-1;
+            high0=high;
+            low=low0;
+        }
+    }
+    for (int i = 0; i <= low; i++) {
+        sum1+=data[i];
+    }
+    for (int i = low+1; i < n; i++) {
+        sum2+=data[i];
+    }
+    return sum2-sum1;
+}
+
+///7
+void FlagArrange(ElemType data[],int n){
+    int i=0,j=0,k=n-1;
+    while (j<=k){
+        switch (data[j]){
+            case RED:swap(data[j],data[i]);i++;j++;
+                break;
+            case WHITE:j++;
+                break;
+            case BLUE:swap(data[j],data[k]);k--;
+        }
     }
 }
 
@@ -307,14 +339,32 @@ int main(){
 //    PrintList(L);
 //    QucikSort(L.data,0,L.length-1);//快速排序
 //    PrintList(L);
-//    SelectSort(L.data,L.length);//选择排序
+///2
+//    DoubleBubbleSort(L.data,L.length);
 //    PrintList(L);
-//    ListInsert(L,1,0);
-//    HeapSort(L.data,L.length-1);//堆排序从小到大
+    ///3
+//    EvenFront(L.data,L.length);
 //    PrintList(L);
-//    HeapSortMin(L.data,L.length-1);//堆排序从大到小
+///4
+//    QucikSort2(L.data,0,L.length-1);//快速排序,pivot随机
 //    PrintList(L);
-    MergeSort(L.data,0,7);//归并排序
+///5
+//    printf("第5小的元素为%d\n",kth_elem(L.data,L.length,5));
+///6
+    printf("差值为%d\n",setPatition(L.data,L.length));
+    PrintList(L);
+    ///7
+    L.data[0]={RED};
+    L.data[1]={BLUE};
+    L.data[2]={WHITE};
+    L.data[3]={BLUE};
+    L.data[4]={WHITE};
+    L.data[5]={RED};
+    L.data[6]={BLUE};
+    L.data[7]={WHITE};
+    PrintList(L);
+    FlagArrange(L.data,L.length);
     PrintList(L);
     return 0;
 }
+

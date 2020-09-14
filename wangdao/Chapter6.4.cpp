@@ -1,7 +1,7 @@
 //
-// Created by Mr. Roy Z. on 2020/8/18.
+// Created by Mr. Roy Z. on 2020/8/21.
 // Copyright (c) 2020 Yu Zhong. All rights reserved.
-// algraph_undirected.cpp
+// Chapter6.4.cpp
 //
 
 #include <stdio.h>
@@ -38,6 +38,48 @@ typedef struct LinkNode{
 typedef struct {
     LinkNode *front,*rear;
 }LinkQueue;
+typedef struct Linknode{
+    ElemType data;
+    struct Linknode *next;
+} Linknode, *LiStack;
+
+void InitStack(LiStack &S){
+    S=NULL;
+}
+
+bool StackEmpty(LiStack S){
+    if(S==NULL)
+        return true;
+    else
+        return false;
+}
+
+bool Push(LiStack &S,ElemType x){
+    Linknode *s = (Linknode *)malloc(sizeof(Linknode));
+    s->data=x;
+    if(S==NULL){
+        S=s;
+        S->next=NULL;
+        return true;
+    }
+    s->next=S;
+    S=s;
+    return true;
+}
+
+bool Pop(LiStack &S,ElemType &x){
+    if(S->next==NULL){
+        x=S->data;
+        S=NULL;
+        return true;
+    }
+    Linknode *p;
+    p=S;
+    x=S->data;
+    S=S->next;
+    free(p);
+    return true;
+}
 
 void InitQueue(LinkQueue &Q){
     Q.front=Q.rear=(LinkNode *)malloc(sizeof(LinkNode));
@@ -179,26 +221,6 @@ void AddEdge(ALGraph &G,int n,int m){
         e->next=p->next;
         p->next=e;
     }
-    if(n<G.vertices[m].first->adjvex){
-        e=(ArcNode *)malloc(sizeof(ArcNode));
-        e->adjvex=n;
-        e->weight=1;
-        e->next=G.vertices[m].first;
-        G.vertices[m].first=e;
-    } else{
-        p=G.vertices[m].first;
-        while(p->next!=NULL){
-            if(p->next->adjvex<n){
-                p=p->next;
-            } else
-                break;
-        }
-        e=(ArcNode *)malloc(sizeof(ArcNode));
-        e->adjvex=n;
-        e->weight=1;
-        e->next=p->next;
-        p->next=e;
-    }
     G.arcnum++;
 }
 
@@ -226,24 +248,6 @@ void RemoveEdge(ALGraph &G,int n,int m){
             }
         }
     }
-    p=G.vertices[m].first;
-    if(p->adjvex==n){
-        G.vertices[m].first=p->next;
-        p->weight=0;
-        free(p);
-    } else{
-        while(p->next!=NULL){
-            if(p->next->adjvex==n){
-                q=p->next;
-                p->next=q->next;
-                q->weight=0;
-                free(q);
-                break;
-            } else{
-                p=p->next;
-            }
-        }
-    }
     G.arcnum--;
 }
 
@@ -255,7 +259,6 @@ void DeleteVertex(ALGraph &G,int x){
     ArcNode *p;
     p=G.vertices[x].first;
     while(p!=NULL){
-        printf("200 %d\n",p->adjvex);
         RemoveEdge(G,x,p->adjvex);
         p=G.vertices[x].first;
     }
@@ -307,15 +310,6 @@ void Set_edge_value(ALGraph &G,int n,int m,int weight){
     p=G.vertices[n].first;
     while(p!=NULL){
         if(p->adjvex==m){
-            p->weight=weight;
-            break;
-        } else{
-            p=p->next;
-        }
-    }
-    p=G.vertices[m].first;
-    while(p!=NULL){
-        if(p->adjvex==n){
             p->weight=weight;
             break;
         } else{
@@ -397,12 +391,64 @@ void DFSTraverse(ALGraph G){
     }
 }
 
+VertexType print[MaxVertexNum]={-1};
+VertexType indegree[MaxVertexNum]={2,0,1,1,1,-1,0};
+bool TopulogicalSort(ALGraph G){
+    LiStack S;
+    InitStack(S);
+    for (int i = 0; i < MaxVertexNum; i++)
+        if(indegree[i]==0&&G.vertices[i].state>0)
+            Push(S,i);
+    int count=0,x;
+    while (!StackEmpty(S)){
+        Pop(S,x);
+        print[count++]=x;
+        for (int i = FirstNeighbor(G,x); i >= 0; i=NextNeighbor(G,x,i)) {
+            if(--indegree[i]==0)
+                Push(S,i);
+        }
+    }
+    if(count==G.vexnum){
+        for (int i = 0; i < G.vexnum; i++) {
+            printf("%d ",print[i]);
+        }
+        printf("\n");
+        return true;
+    }
+    else{
+        printf("error\n");
+        return false;
+    }
+}
+
+///9
+void DFS_ReTopu(ALGraph G,int n){
+    visited[n]= true;
+    for (int i = FirstNeighbor(G,n); i >= 0; i=NextNeighbor(G,n,i)) {
+        if(!visited[i]){
+            DFS_ReTopu(G,i);
+        }
+    }
+    visit(G,n);
+}
+void DFS_ReTopuTraverse(ALGraph G){
+    for (int i = 0; i < MaxVertexNum; i++) {
+        visited[i]= false;
+    }
+    for (int i = 0; i < MaxVertexNum; i++) {
+        if(G.vertices[i].state>0&&visited[i]== false){
+            DFS_ReTopu(G,i);
+        }
+    }
+    printf("\n");
+}
+
 int main(){
     ALGraph G;
-    EdgeType edge[5][5]={{0,1,0,1,0},{1,0,1,0,1},{0,1,0,1,1},{1,0,1,0,0},{0,1,1,0,0}};
-    CreateGraph(G,edge,5,6);
+    EdgeType edge[5][5]={{0,1,0,0,0},{1,0,1,0,0},{0,0,0,1,1},{1,0,0,0,0},{0,1,0,0,0}};
+    CreateGraph(G,edge,5,7);
     PrintfGraph(G);
-    if(Adjacent(G,2,0)){
+    if(Adjacent(G,1,2)){
         printf("存在边\n");
     } else{
         printf("不存在边\n");
@@ -410,29 +456,39 @@ int main(){
     Neighbors(G,2);
     InsertVertex(G,7);
     PrintfGraph(G);
-    AddEdge(G,0,2);
+    AddEdge(G,7,3);
     PrintfGraph(G);
-    RemoveEdge(G,0,2);
+    RemoveEdge(G,7,3);
     PrintfGraph(G);
     DeleteVertex(G,7);
     PrintfGraph(G);
     if(FirstNeighbor(G,4)==-1)
         printf("无邻接点\n");
     else
-        printf("%d的第一个邻界点为%d\n",4,FirstNeighbor(G,4));
-    if(NextNeighbor(G,4,1)==-1)
+        printf("%d的第一个邻界点为%d\n",2,FirstNeighbor(G,4));
+    if(NextNeighbor(G,2,3)==-1)
         printf("无下一个邻接点\n");
     else
-        printf("%d下一个邻界点为%d\n",4,NextNeighbor(G,4,1));
-    if(Get_edge_value(G,3,2)==-1)
+        printf("%d下一个邻界点为%d\n",2,NextNeighbor(G,2,3));
+    if(Get_edge_value(G,2,3)==-1)
         printf("error\n");
     else
-        printf("权值为%d\n",Get_edge_value(G,3,2));
-    Set_edge_value(G,3,2,2);
+        printf("权值为%d\n",Get_edge_value(G,2,3));
+    Set_edge_value(G,2,3,2);
     PrintfGraph(G);
     InsertVertex(G,7);
 //    BFSTraverse(G);
-    BFS_MIN_Distance(G,1);//单源非带权图从u到其他节点的最小路径
+//    BFS_MIN_Distance(G,1);//单源非带权图从u到其他节点的最小路径
 //    DFSTraverse(G);
+    RemoveEdge(G,4,1);
+    PrintfGraph(G);
+    RemoveEdge(G,0,1);
+    PrintfGraph(G);
+    TopulogicalSort(G);//拓扑排序
+//    AddEdge(G,4,1);
+//    AddEdge(G,0,1);
+//    PrintfGraph(G);
+/// 9
+    DFS_ReTopuTraverse(G);
     return 0;
 }

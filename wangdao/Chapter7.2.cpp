@@ -1,8 +1,8 @@
 //
-// Created by Yu Zhong. on 2020-04-17.
-// 顺序表(动态分配)
+// Created by Mr. Roy Z. on 2020/8/23.
+// Copyright (c) 2020 Yu Zhong. All rights reserved.
+// Chapter7.2.cpp
 //
-
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -119,6 +119,31 @@ int Binary_Search(SeqList L,int x){
     return -1;
 }
 
+int Binary_Search_Rec(SeqList L,int x,int low,int high){
+    if(low>high)
+        return 0;
+    int mid=(low+high)/2;
+    if(L.data[mid]==x)
+        return mid;
+    else if(L.data[mid]<x)
+        Binary_Search_Rec(L,x,mid+1,high);
+    else
+        Binary_Search_Rec(L,x,low,mid-1);
+}
+
+int Search_Exchange(SeqList &L,int x){
+    int i=0;
+    while(L.data[i]!=x&&i<L.length-1)
+        i++;
+    if(i<L.length-1&&i>0){
+        int temp=L.data[i];
+        L.data[i]=L.data[i-1];
+        L.data[i-1]=temp;
+        return --i;
+    } else
+        return -1;
+}
+
 int main(){
     SeqList L;
     InitList(L);
@@ -161,5 +186,8 @@ int main(){
         printf("找到值为%d,在第%d位\n",1,Binary_Search(L,11));
     else
         printf("无值为%d的数\n",11);
+    printf("找到值为%d,在第%d位\n",4,Binary_Search_Rec(L,4,1,L.length));
+    Search_Exchange(L,2);
+    PrintList(L);
     return 0;
 }
